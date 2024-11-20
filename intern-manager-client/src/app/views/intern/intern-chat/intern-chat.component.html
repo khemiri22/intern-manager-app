@@ -1,0 +1,104 @@
+
+
+<c-row class="g-2">
+  <c-col sm="2">
+    <c-card class="mb-4">
+      <c-nav class="flex-column" variant="pills">
+        <c-nav-item>
+          <a [active]="true" cNavLink disabled >
+            ADMIN
+          </a>
+        </c-nav-item>
+      </c-nav>
+    </c-card>
+  </c-col>
+  <c-col sm="10">
+    <c-card>
+      <c-card-header>ADMIN</c-card-header>
+      <c-card-body class="scrollable-container" id="msgContainer" *ngIf="chatrooms.get(talkingTo)?.length !== 0">
+        <!-- Messages -->
+
+        <div
+          *ngFor="let message of chatrooms.get(talkingTo)"
+          style="display: flex; flex-direction: column; height: 100%"
+        >
+          <c-alert
+            *ngIf="message.expediteurId == internInfo.id"
+            color="info"
+            variant="solid"
+            style="width: 40%; align-self: flex-end"
+          >
+            <p>{{ message.contenu }}</p>
+            <p
+              class="mb-0"
+              style="
+                font-size: 70%;
+                text-decoration: underline;
+                text-align: end;
+              "
+            >
+              {{ message.dateEnvoi }}
+            </p>
+          </c-alert>
+          <c-alert
+            *ngIf="message.expediteurId != internInfo.id"
+            color="secondary"
+            variant="solid"
+            style="width: 40%; align-self: flex-start"
+          >
+            <p>{{ message.contenu }}</p>
+            <p
+              class="mb-0"
+              style="
+                font-size: 70%;
+                text-decoration: underline;
+                text-align: end;
+              "
+            >
+              {{ message.dateEnvoi }}
+            </p>
+          </c-alert>
+        </div>
+
+        <!-- Messages -->
+      </c-card-body>
+      <c-card-body id="msgContainer" style="display: flex; flex-direction: column; height: 100%" *ngIf="chatrooms.get(talkingTo)?.length === 0 || chatrooms.get(talkingTo) === undefined" >
+        <c-alert
+            color="secondary"
+            variant="solid"
+            style="width: 40%; align-self: center"
+          >
+          <p style="text-align: center;">Aucun message ni envoyés ni reçus</p>
+        </c-alert>
+      </c-card-body>
+      <c-card-footer>
+        <!-- Send Directive -->
+        <form cForm class="row g-3">
+          <c-col sm="10">
+            <input
+              cFormControl
+              id="inputEmail4"
+              type="text"
+              name="contenu"
+              placeholder="Message"
+              [(ngModel)]="contenu"
+            />
+          </c-col>
+          <c-col sm="2">
+            <button
+              cButton
+              class="px-4"
+              color="primary"
+              type="button"
+              shape="rounded-pill"
+              (click)="sendMessage()"
+            >
+              Envoyer <svg cIcon name="cilSend"></svg>
+            </button>
+          </c-col>
+        </form>
+      </c-card-footer>
+    </c-card>
+
+  </c-col>
+</c-row>

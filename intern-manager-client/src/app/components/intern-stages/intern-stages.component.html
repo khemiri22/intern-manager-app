@@ -1,0 +1,34 @@
+<c-row>
+    <c-col xs>
+      <c-card class="mb-4">
+        <c-card-body>
+          <h5 cCardTitle>Liste des stages effectués</h5>
+            <table [striped]="true" cTable [responsive]="true">
+                <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Date début</th>
+                  <th scope="col">Date fin</th>
+                  <th scope="col">Tuteur</th>
+                  <th scope="col">Sujet</th>
+                  <th scope="col">Déscription</th>
+                  <th scope="col">Établissement</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let stage of stages;let i = index" style="font-size: 13px;">
+                  <th scope="row">{{i+1}}</th>
+                  <td>{{stage.dateDebut}}</td>
+                  <td>{{stage.dateFin}}</td>
+                  <td>{{stage.tuteur | capitalize}}</td>
+                  <td>{{stage.sujet}}</td>
+                  <td>{{stage.description}}</td>
+                  <td>{{stage.etablissement | capitalize}}</td>
+                </tr>
+                </tbody>
+              </table>  
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+  

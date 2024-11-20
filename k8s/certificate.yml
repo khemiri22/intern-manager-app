@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-certificate
+spec:
+  secretName: certificate-secret
+  issuerRef:
+    name: app-issuer
+    kind: ClusterIssuer
+  commonName: www.intern-manager.tech
+  dnsNames:
+  - intern-manager.tech
+  - www.intern-manager.tech

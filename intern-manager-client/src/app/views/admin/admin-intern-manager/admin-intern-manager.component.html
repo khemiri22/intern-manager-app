@@ -1,0 +1,552 @@
+<c-row class="g-4">
+  <div style="margin-bottom: 15px; display: flex; justify-content: flex-end">
+    <button cButton color="primary" (click)="toggleAddInternModal()">
+      <svg cIcon name="cilUserFollow"></svg> Ajouter
+    </button>
+  </div>
+  <!-- Intern card -->
+  <c-col sm="4" *ngFor="let item of internList">
+    <c-card style="width: 24rem">
+      <img cCardImg="top" [src]="item.image" height="400px" />
+      <c-card-body>
+        <h5 cCardTitle>{{ item.nom | capitalize }}</h5>
+        <p cCardText>
+          {{ item.prenom | capitalize }}
+        </p>
+        <button
+          cButton
+          color="info"
+          style="margin-right: 15px"
+          (click)="
+            toggleUpdateInternModal();
+            getInternByIdData(item.id.toString());
+            selectUser(item.id.toString())
+          "
+        >
+          <svg cIcon name="cilPen"></svg> Modifier
+        </button>
+        <button
+          cButton
+          color="danger"
+          style="margin-right: 15px"
+          (click)="toggleDeleteInternModal(); selectUser(item.id.toString())"
+        >
+          <svg cIcon name="cilUserUnfollow"></svg> Supprimer
+        </button>
+        <button
+          cButton
+          color="secondary"
+          (click)="
+            toggleStagesInternModal();
+            selectUser(item.id.toString());
+            getInternByIdData(item.id.toString());
+            getAllStageOFIntern(item.id.toString())
+          "
+        >
+          <svg cIcon name="cilList"></svg> Stages
+        </button>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <!-- intern crud modal directive -->
+  <ng-container *ngTemplateOutlet="openAddIntern" />
+  <ng-container *ngTemplateOutlet="openDeleteIntern" />
+  <ng-container *ngTemplateOutlet="openUpdateIntern" />
+  <ng-container *ngTemplateOutlet="openStagesIntern" />
+</c-row>
+
+<!-- Add intern modal -->
+<ng-template #openAddIntern>
+  <c-modal
+    id="liveDemoModal"
+    [visible]="addInternModalVisible"
+    backdrop="static"
+  >
+    <c-modal-header>
+      <h5 cModalTitle>Ajouter Stagiaire</h5>
+      <button
+        (click)="toggleAddInternModal(); resetFields()"
+        cButtonClose
+      ></button>
+    </c-modal-header>
+    <c-modal-body>
+      <!-- add form -->
+
+      <form cForm>
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilEnvelopeClosed"></svg>
+          </span>
+          <input
+            cFormControl
+            placeholder="Email"
+            [(ngModel)]="internRequest.email"
+            name="email"
+            #email="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <p
+          *ngIf=" email.errors?.['required'] && email.touched"
+          style="color: red; background-color: transparent; font-size: 14px"
+        >
+          Il faut remplir ce champ !
+        </p>
+        <!--Alert -->
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilUser"></svg>
+          </span>
+          <input
+            cFormControl
+            placeholder="Nom"
+            [(ngModel)]="internRequest.nom"
+            name="nom"
+            #nom="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <p
+          *ngIf=" nom.errors?.['required'] && nom.touched"
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Il faut remplir ce champ !
+        </p>
+        <!--Alert -->
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilUser"></svg>
+          </span>
+          <input
+            cFormControl
+            placeholder="Prenom"
+            [(ngModel)]="internRequest.prenom"
+            name="prenom"
+            #prenom="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <p
+          *ngIf=" prenom.errors?.['required'] && prenom.touched"
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Il faut remplir ce champ !
+        </p>
+        <!--Alert -->
+
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilImage"></svg>
+          </span>
+          <input
+            (change)="handleUpload($event)"
+            type="file"
+            cFormControl
+            placeholder="Image"
+            [(ngModel)]="internRequest.image"
+            name="image"
+            #image="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <p
+          *ngIf=" image.errors?.['required'] && image.touched"
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Il faut remplir ce champ !
+        </p>
+        <!--Alert -->
+
+        <c-input-group class="mb-4">
+          <span cInputGroupText>
+            <svg cIcon name="cilLockLocked"></svg>
+          </span>
+          <input
+            [(ngModel)]="internRequest.password"
+            name="password"
+            cFormControl
+            placeholder="Mot de passe"
+            type="password"
+            #password="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <p
+          *ngIf=" password.errors?.['required'] && password.touched"
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Il faut remplir ce champ !
+        </p>
+        <!--Alert -->
+        <c-input-group class="mb-4">
+          <span cInputGroupText>
+            <svg cIcon name="cilLockLocked"></svg>
+          </span>
+          <input
+            [(ngModel)]="internRequest.confirmPassword"
+            name="confirmPassword"
+            cFormControl
+            placeholder="Répéter le mot de passe"
+            type="password"
+            #confirmPassword="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <p
+          *ngIf=" confirmPassword.errors?.['required'] && confirmPassword.touched"
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Il faut remplir ce champ !
+        </p>
+        <!--Alert -->
+        <!--Alert -->
+        <p
+          *ngIf=" internRequest.password!==internRequest.confirmPassword && !confirmPassword.errors?.['required'] && !password.errors?.['required'] "
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Les mots de passe ne correspondent pas !
+        </p>
+        <!--Alert -->
+      </form>
+    </c-modal-body>
+    <c-modal-footer>
+      <button
+        (click)="toggleAddInternModal(); resetFields()"
+        cButton
+        color="secondary"
+      >
+        Close
+      </button>
+      <button
+        (click)="addIntern()"
+        [disabled]="
+          internRequest.email === '' ||
+          internRequest.nom === '' ||
+          internRequest.prenom === '' ||
+          internRequest.password === '' ||
+          internRequest.confirmPassword === '' ||
+          internRequest.password !== internRequest.confirmPassword ||
+          internRequest.image === ''
+        "
+        cButton
+        class="px-4"
+        color="primary"
+        type="button"
+      >
+        Ajouter
+      </button>
+    </c-modal-footer>
+  </c-modal>
+</ng-template>
+
+<!-- Delete intern modal -->
+<ng-template #openDeleteIntern>
+  <c-modal
+    id="liveDemoModal"
+    [visible]="deleteInternModalVisible"
+    backdrop="static"
+  >
+    <c-modal-header>
+      <h5 cModalTitle>Supprimer Stagiaire</h5>
+      <button (click)="toggleDeleteInternModal()" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+      Êtes-vous sûr de vouloir supprimer ce stagiaire?
+    </c-modal-body>
+    <c-modal-footer>
+      <button (click)="toggleDeleteInternModal()" cButton color="secondary">
+        Close
+      </button>
+      <button cButton color="danger" (click)="deleteIntern()">Supprimer</button>
+    </c-modal-footer>
+  </c-modal>
+</ng-template>
+
+<!-- Update intern modal -->
+<ng-template #openUpdateIntern>
+  <c-modal
+    id="liveDemoModal"
+    [visible]="updateInternModalVisible"
+    backdrop="static"
+  >
+    <c-modal-header>
+      <h5 cModalTitle>Modifier Stagiaire</h5>
+      <button
+        (click)="toggleUpdateInternModal(); resetFields()"
+        cButtonClose
+      ></button>
+    </c-modal-header>
+    <c-modal-body>
+      <!-- Update form -->
+
+      <form cForm>
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilEnvelopeClosed"></svg>
+          </span>
+          <input
+            cFormControl
+            placeholder="Email"
+            [(ngModel)]="internRequest.email"
+            name="email"
+            #email="ngModel"
+            required
+            [value]="internRequest.email"
+          />
+        </c-input-group>
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilUser"></svg>
+          </span>
+          <input
+            cFormControl
+            placeholder="Nom"
+            [(ngModel)]="internRequest.nom"
+            name="nom"
+            #nom="ngModel"
+            required
+            [value]="internRequest.nom"
+          />
+        </c-input-group>
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilUser"></svg>
+          </span>
+          <input
+            cFormControl
+            placeholder="Prenom"
+            [(ngModel)]="internRequest.prenom"
+            name="prenom"
+            #prenom="ngModel"
+            required
+            [value]="internRequest.prenom"
+          />
+        </c-input-group>
+        <c-input-group class="mb-3">
+          <span cInputGroupText>
+            <svg cIcon name="cilImage"></svg>
+          </span>
+          <input
+            (change)="handleUpload($event)"
+            type="file"
+            cFormControl
+            placeholder="Image"
+            [(ngModel)]="internRequest.image"
+            name="image"
+            #image="ngModel"
+            required
+          />
+        </c-input-group>
+        <c-input-group class="mb-4">
+          <span cInputGroupText>
+            <svg cIcon name="cilLockLocked"></svg>
+          </span>
+          <input
+            [(ngModel)]="internRequest.password"
+            name="password"
+            cFormControl
+            placeholder="Mot de passe"
+            type="password"
+            #password="ngModel"
+            required
+          />
+        </c-input-group>
+        <c-input-group class="mb-4">
+          <span cInputGroupText>
+            <svg cIcon name="cilLockLocked"></svg>
+          </span>
+          <input
+            [(ngModel)]="internRequest.confirmPassword"
+            name="confirmPassword"
+            cFormControl
+            placeholder="Répéter le mot de passe"
+            type="password"
+            #confirmPassword="ngModel"
+            required
+          />
+        </c-input-group>
+        <!--Alert -->
+        <!--Alert -->
+        <p
+          *ngIf="internRequest.password !== internRequest.confirmPassword"
+          style="
+            color: red;
+            background-color: transparent;
+            font-size: 14px;
+            padding-top: 6px;
+          "
+        >
+          Les mots de passe ne correspondent pas !
+        </p>
+        <!--Alert -->
+      </form>
+    </c-modal-body>
+    <c-modal-footer>
+      <button
+        (click)="toggleUpdateInternModal(); resetFields()"
+        cButton
+        color="secondary"
+      >
+        Close
+      </button>
+      <button
+        (click)="updateIntern()"
+        [disabled]="internRequest.password !== internRequest.confirmPassword"
+        cButton
+        class="px-4"
+        color="primary"
+        type="button"
+      >
+        Modifier
+      </button>
+    </c-modal-footer>
+  </c-modal>
+</ng-template>
+
+<!-- Stages intern modal -->
+<ng-template #openStagesIntern>
+  <c-modal
+    size="xl"
+    id="liveDemoModal"
+    [visible]="stagesInternModalVisible"
+    backdrop="static"
+  >
+    <c-modal-header>
+      <h5 cModalTitle>
+        Stagaire : {{ internRequest.prenom | capitalize }}
+        {{ internRequest.nom | capitalize }}
+      </h5>
+      <button
+        (click)="toggleStagesInternModal(); resetStageFields();"
+        cButtonClose
+      ></button>
+    </c-modal-header>
+    <c-modal-body>
+      <!-- Intern Stage List -->
+      <app-intern-stages />
+
+      <!-- affecter à un stage -->
+      <c-row>
+        <c-col xs>
+          <c-card class="mb-4">
+            <c-card-body>
+              <h5 cCardTitle>
+                Affecter {{ internRequest.prenom | capitalize }}
+                {{ internRequest.nom | capitalize }} à un stage
+              </h5>
+              <form cForm class="row g-3">
+                <legend style="text-decoration: underline;">Remplissez tout les champs pour affecter le stagiaire</legend>
+                <c-col [md]="4">
+                  <label cLabel for="inputEmail4">Nom Tuteur</label>
+                  <input cFormControl type="text" 
+                  [(ngModel)]="stageRequest.tuteur"
+                  name="tuteur"
+                  #tuteur="ngModel"/>
+                </c-col>
+                <c-col [md]="4">
+                  <label cLabel for="inputEmail4">Sujet</label>
+                  <input cFormControl type="text"
+                  [(ngModel)]="stageRequest.sujet"
+                  name="sujet"
+                  #sujet="ngModel"/>
+                  
+                </c-col>
+                <c-col [md]="4">
+                  <label cLabel for="inputEmail4">Établissement</label>
+                  <input cFormControl type="text"
+                  [(ngModel)]="stageRequest.etablissement"
+                  name="etablissement"
+                  #etablissement="ngModel"/>
+                  
+                </c-col>
+                <c-col [md]="4">
+                  <label cLabel for="inputEmail4">Déscription</label>
+                  <textarea cFormControl 
+                  [(ngModel)]="stageRequest.description"
+                  name="description"
+                  #description="ngModel"
+                  >
+                  </textarea>
+                </c-col>
+                <c-col [md]="4">
+                  <label cLabel for="inputEmail4">Date début de stage</label>
+                  <input cFormControl type="date"
+                  [(ngModel)]="stageRequest.dateDebut"
+                  name="dateDebut"
+                  #dateDebut="ngModel"
+                  />
+                </c-col>
+                <c-col [md]="4">
+                  <label cLabel for="inputEmail4">Date fin de stage</label>
+                  <input cFormControl type="date"
+                  [(ngModel)]="stageRequest.dateFin"
+                  name="dateFin"
+                  #dateFin="ngModel"
+                  
+                  />
+                </c-col>
+                <c-col [md]="4">
+                  <button
+                    (click)="affecterStage()"
+                    cButton
+                    class="px-4"
+                    color="primary"
+                    type="button"
+                    [disabled]="stageRequest.dateDebut === '' || stageRequest.dateFin === '' ||stageRequest.sujet === '' ||stageRequest.tuteur === '' ||stageRequest.description === '' ||stageRequest.etablissement === ''  "
+                  >
+                    Affecter
+                  </button>
+                </c-col>
+              </form>
+            </c-card-body>
+          </c-card>
+        </c-col>
+      </c-row>
+    </c-modal-body>
+    <c-modal-footer>
+      <button
+        (click)="toggleStagesInternModal(); resetStageFields();"
+        cButton
+        color="secondary"
+      >
+        Close
+      </button>
+    </c-modal-footer>
+  </c-modal>
+</ng-template>

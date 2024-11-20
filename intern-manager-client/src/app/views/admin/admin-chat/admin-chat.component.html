@@ -1,0 +1,114 @@
+<c-row class="g-2" *ngIf="destinataires.length > 0">
+    <c-col sm="2">
+      <c-card class="mb-4">
+        <c-nav class="flex-column" variant="pills">
+          <c-nav-item *ngFor="let destinataire of destinataires">
+            <a [active]="destinataire.id === talkingTo.id" cNavLink (click)="changeTab(destinataire)">
+              {{destinataire.prenom| capitalize}} {{destinataire.nom| capitalize}}
+            </a>
+          </c-nav-item>
+        </c-nav>
+      </c-card>
+    </c-col>
+    <c-col sm="10" >
+      <c-card>
+        <c-card-header>{{talkingTo.prenom| capitalize}} {{talkingTo.nom| capitalize}}</c-card-header>
+        <c-card-body class="scrollable-container" id="msgContainer" *ngIf="chatrooms.get(talkingTo.id)?.length !== 0">
+          <!-- Messages -->
+          <div
+            *ngFor="let message of chatrooms.get(talkingTo.id)"
+            style="display: flex; flex-direction: column; height: 100%"
+          >
+            <c-alert
+              *ngIf="message.expediteurId === adminId"
+              color="info"
+              variant="solid"
+              style="width: 40%; align-self: flex-end"
+            >
+              <p>{{ message.contenu }}</p>
+              <p
+                class="mb-0"
+                style="
+                  font-size: 70%;
+                  text-decoration: underline;
+                  text-align: end;
+                "
+              >
+                {{ message.dateEnvoi }}
+              </p>
+            </c-alert>
+            <c-alert
+              *ngIf="message.expediteurId !== adminId"
+              color="secondary"
+              variant="solid"
+              style="width: 40%; align-self: flex-start"
+            >
+              <p>{{ message.contenu }}</p>
+              <p
+                class="mb-0"
+                style="
+                  font-size: 70%;
+                  text-decoration: underline;
+                  text-align: end;
+                "
+              >
+                {{ message.dateEnvoi }}
+              </p>
+            </c-alert>
+          </div>
+  
+          <!-- Messages -->
+        </c-card-body>
+        <c-card-body id="msgContainer" style="display: flex; flex-direction: column; height: 100%" *ngIf="chatrooms.get(talkingTo.id)?.length === 0 || chatrooms.get(talkingTo.id) === undefined">
+          <c-alert
+              color="secondary"
+              variant="solid"
+              style="width: 40%; align-self: center"
+            >
+            <p style="text-align: center;">Aucun message ni envoyés ni reçus</p>
+          </c-alert>
+        </c-card-body>
+        <c-card-footer>
+          <!-- Send Directive -->
+          <form cForm class="row g-3">
+            <c-col sm="10">
+              <input
+                cFormControl
+                id="inputEmail4"
+                type="text"
+                name="contenu"
+                placeholder="Message"
+                [(ngModel)]="contenu"
+              />
+            </c-col>
+            <c-col sm="2">
+              <button
+                cButton
+                class="px-4"
+                color="primary"
+                type="button"
+                shape="rounded-pill"
+                (click)="sendMessage()"
+              >
+                Envoyer <svg cIcon name="cilSend"></svg>
+              </button>
+            </c-col>
+          </form>
+        </c-card-footer>
+      </c-card>
+
+      
+    </c-col>
+  </c-row>
+ <!-- S'il n'ya pas des stagiaires pour ce admin-->
+  <c-row class="justify-content-center" *ngIf="destinataires.length === 0 || destinataires === undefined">
+    <c-col xs="6" id="msgContainer" style="margin-top: 20%;">
+        <c-alert
+              color="secondary"
+              variant="solid"
+              
+            >
+            <h4 cAlertHeading style="text-align: center;">Aucun stagiaire pour contacter !</h4>
+            </c-alert>
+    </c-col>
+  </c-row>

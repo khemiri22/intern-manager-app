@@ -1,0 +1,9 @@
+{
+    "/api": {
+      "target": "http://spring-boot-app",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  

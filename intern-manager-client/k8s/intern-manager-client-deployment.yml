@@ -1,0 +1,20 @@
+apiVersion: apps/v1             # API version
+kind: Deployment                # Type of kubernetes resource
+metadata:
+  name: client      # Name of the kubernetes resource
+spec:
+  replicas: 1                   # No of replicas/pods to run
+  selector:                    
+    matchLabels:                # This deployment applies to Pods matching the specified labels
+      app: client
+  template:                     # Template for creating the Pods in this deployment
+    metadata:
+      labels:                   # Labels that will be applied to all the Pods in this deployment
+        app: client
+    spec:                       # Spec for the containers that will run inside the Pods
+      containers:
+      - name: client
+        image: DOCKER_IMAGE:IMAGE_TAG
+        ports:
+          - name: client
+            containerPort: 80   # Should match the Port that the container listens on

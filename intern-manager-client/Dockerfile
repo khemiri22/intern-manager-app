@@ -1,0 +1,13 @@
+# Build Stage
+FROM node:20 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build --prod
+# Host the app
+FROM nginx:alpine
+COPY --from=build /app/dist/intern-manager-client/browser /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

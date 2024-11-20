@@ -1,0 +1,39 @@
+<c-row class="g-4">
+    <c-col xs>
+        <c-card class="mb-4">
+          <c-card-body>
+            <h5 cCardTitle>Liste des stages effectués par {{internResponse.prenom | capitalize}} {{internResponse.nom | capitalize}}</h5>
+              <table [striped]="true" cTable [responsive]="true">
+                  <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date début</th>
+                    <th scope="col">Date fin</th>
+                    <th scope="col">Tuteur</th>
+                    <th scope="col">Sujet</th>
+                    <th scope="col">Déscription</th>
+                    <th scope="col">Établissement</th>
+                    <th scope="col">Imprimer Attestation</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let stage of stageList;let i = index" style="font-size: 13px;">
+                    <th scope="row">{{i+1}}</th>
+                    <td>{{stage.dateDebut}}</td>
+                    <td>{{stage.dateFin}}</td>
+                    <td>{{stage.tuteur | capitalize}}</td>
+                    <td>{{stage.sujet}}</td>
+                    <td>{{stage.description}}</td>
+                    <td>{{stage.etablissement | capitalize}}</td>
+                    <td>
+                      <button cButton color="secondary" shape="rounded-0" variant="outline" (click)="generateCertif(stage.id.toString())" >
+                        <svg cIcon name="cilPrint"></svg> Imprimer l'attestation
+                      </button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>  
+          </c-card-body>
+        </c-card>
+      </c-col>
+</c-row>

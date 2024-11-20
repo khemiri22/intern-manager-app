@@ -1,0 +1,56 @@
+services:
+  spring-boot-app:
+    image: khemiri22/spring-boot-app:latest
+    container_name: spring-boot-app-container
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/gestion_stagiaires?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: mohamedamine.khemiri@sesame.com.tn
+      SPRING_MAIL_PASSWORD: SygfkhMi
+      JWT_TOKEN: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+      FILE_UPLOAD_DIR: /uploads/interns
+    volumes:
+      - uploads:/uploads/interns
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - mysql
+
+  angular-app:
+    image: khemiri22/angular-app:latest
+    container_name: angular-app-container
+    restart: always
+    ports:
+      - "4200:80"
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestion_stagiaires
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+volumes:
+  mysql-data:
+    driver: local
+  uploads: 
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
