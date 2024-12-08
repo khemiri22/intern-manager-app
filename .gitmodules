@@ -1,0 +1,9 @@
+[submodule "intern-manager-infrastructure"]
+	path = intern-manager-infrastructure
+	url = https://github.com/khemiri22/intern-manager-infrastructure
+[submodule "intern-manager-client"]
+	path = intern-manager-client
+	url = https://github.com/khemiri22/intern-manager-client
+[submodule "intern-manager-server"]
+	path = intern-manager-server
+	url = https://github.com/khemiri22/intern-manager-server
